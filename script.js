@@ -573,3 +573,194 @@ document.addEventListener(
 
     }
 );
+/* ============================================
+   LAST DECREE V7 — AI CORE
+   ============================================ */
+
+const LastDecreeAI = (() => {
+
+  const state = {
+    history: [],
+    busy: false
+  };
+
+  async function ask(message) {
+
+    if (state.busy) return null;
+
+    const cleanMessage = String(message || "").trim();
+
+    if (!cleanMessage) return null;
+
+    state.busy = true;
+
+    try {
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          message: cleanMessage,
+          history: state.history
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.error || "Erreur du noyau IA."
+        );
+      }
+
+      state.history.push({
+        role: "user",
+        content: cleanMessage
+      });
+
+      state.history.push({
+        role: "assistant",
+        content: data.reply
+      });
+
+      // Garder seulement les derniers échanges
+      if (state.history.length > 10) {
+        state.history =
+          state.history.slice(-10);
+      }
+
+      return data.reply;
+
+    } catch (error) {
+
+      console.error(
+        "LAST DECREE AI:",
+        error
+      );
+
+      return "⚠️ Le noyau IA est momentanément indisponible.";
+
+    } finally {
+
+      state.busy = false;
+
+    }
+  }
+
+  function clearHistory() {
+    state.history = [];
+  }
+
+  return {
+    ask,
+    clearHistory
+  };
+
+})();
+
+
+/* ============================================
+   INTERFACE CHAT
+   ============================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const input =
+    document.querySelector("#ai-input");
+
+  const send =
+    document.querySelector("#ai-send");
+
+  const messages =
+    document.querySelector("#ai-messages");
+
+  if (!input || !send || !messages) {
+    console.warn(
+      "LAST DECREE AI: interface non trouvée."
+    );
+    return;
+  }
+
+  function addMessage(text, type) {
+
+    const message =
+      document.createElement("div");
+
+    message.className =
+      `ai-message ${type}`;
+
+    message.textContent = text;
+
+    messages.appendChild(message);
+
+    messages.scrollTop =
+      messages.scrollHeight;
+
+    return message;
+  }
+
+  async function sendMessage() {
+
+    const text =
+      input.value.trim();
+
+    if (!text) return;
+
+    input.value = "";
+
+    addMessage(
+      text,
+      "user"
+    );
+
+    const loading =
+      addMessage(
+        "LAST DECREE AI analyse...",
+        "ai loading"
+      );
+
+    send.disabled = true;
+
+    const reply =
+      await LastDecreeAI.ask(text);
+
+    loading.remove();
+
+    addMessage(
+      reply ||
+      "⚠️ Aucun signal reçu.",
+      "ai"
+    );
+
+    send.disabled = false;
+
+    input.focus();
+  }
+
+  send.addEventListener(
+    "click",
+    sendMessage
+  );
+
+  input.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter" &&
+        !event.shiftKey
+      ) {
+
+        event.preventDefault();
+
+        sendMessage();
+      }
+
+    }
+  );
+
+});
