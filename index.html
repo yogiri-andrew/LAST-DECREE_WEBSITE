@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LAST DECREE — D.E.C.R.E.E.</title>
+
+    <meta name="description"
+          content="LAST DECREE — Système central D.E.C.R.E.E.">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="boot-screen">
+    <div class="boot-logo">LAST DECREE</div>
+
+    <div class="boot-line">
+        INITIALISATION DU SYSTÈME...
+    </div>
+
+    <div class="boot-progress">
+        <div id="boot-progress-bar"></div>
+    </div>
+
+    <div id="boot-status">
+        Chargement de D.E.C.R.E.E.
+    </div>
+</div>
+
+
+<div id="app">
+
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="brand-symbol">◈</div>
+
+            <div>
+                <div class="brand-name">LAST DECREE</div>
+                <div class="brand-sub">
+                    CENTRAL INTELLIGENCE SYSTEM
+                </div>
+            </div>
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            D.E.C.R.E.E. ONLINE
+        </div>
+
+    </header>
+
+
+    <main class="main-container">
+
+        <section class="hero">
+
+            <div class="ai-core">
+
+                <div class="core-ring ring-one"></div>
+                <div class="core-ring ring-two"></div>
+                <div class="core-ring ring-three"></div>
+
+                <div class="core-center">
+                    <span>D</span>
+                </div>
+
+            </div>
+
+            <div class="hero-text">
+
+                <div class="eyebrow">
+                    DIGITAL EXECUTIVE CORE
+                </div>
+
+                <h1>D.E.C.R.E.E.</h1>
+
+                <p>
+                    Intelligence centrale de LAST DECREE.
+                    Analyse, conversation et assistance générale.
+                </p>
+
+                <div class="mode-selector">
+
+                    <button
+                        class="mode-btn active"
+                        data-mode="general">
+                        IA GÉNÉRALE
+                    </button>
+
+                    <button
+                        class="mode-btn"
+                        data-mode="decree">
+                        LAST DECREE
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="chat-panel">
+
+            <div class="chat-header">
+
+                <div>
+                    <strong>D.E.C.R.E.E.</strong>
+                    <span id="current-mode">
+                        MODE GÉNÉRAL
+                    </span>
+                </div>
+
+                <button id="clear-chat">
+                    EFFACER
+                </button>
+
+            </div>
+
+
+            <div id="chat-messages" class="chat-messages">
+
+                <div class="message ai-message">
+
+                    <div class="message-label">
+                        D.E.C.R.E.E.
+                    </div>
+
+                    <div class="message-content">
+                        Système opérationnel.
+                        <br><br>
+                        Je peux répondre aux questions générales
+                        ou analyser les données de LAST DECREE.
+                        <br><br>
+                        <span class="accent">
+                            Que souhaitez-vous savoir ?
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="typing" id="typing">
+                <span></span>
+                <span></span>
+                <span></span>
+                D.E.C.R.E.E. analyse...
+            </div>
+
+
+            <div class="quick-actions">
+
+                <button data-prompt="Qui es-tu ?">
+                    🤖 Qui es-tu ?
+                </button>
+
+                <button data-prompt="Explique-moi ce qu'est LAST DECREE.">
+                    👁️ LAST DECREE
+                </button>
+
+                <button data-prompt="Donne-moi une idée de projet.">
+                    💡 Idée
+                </button>
+
+                <button data-prompt="Explique-moi Python simplement.">
+                    💻 Python
+                </button>
+
+            </div>
+
+
+            <div class="input-area">
+
+                <button id="voice-btn" title="Commande vocale">
+                    🎙️
+                </button>
+
+                <textarea
+                    id="user-input"
+                    rows="1"
+                    placeholder="Parlez à D.E.C.R.E.E..."
+                    autocomplete="off">
+                </textarea>
+
+                <button id="send-btn">
+                    ➤
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <section class="system-grid">
+
+            <div class="system-card">
+                <span>CORE</span>
+                <strong>ACTIVE</strong>
+            </div>
+
+            <div class="system-card">
+                <span>MEMORY</span>
+                <strong id="memory-status">LOCAL</strong>
+            </div>
+
+            <div class="system-card">
+                <span>VOICE</span>
+                <strong id="voice-status">READY</strong>
+            </div>
+
+            <div class="system-card">
+                <span>MODE</span>
+                <strong id="mode-status">GENERAL</strong>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <span>LAST DECREE © 2026</span>
+
+        <span>
+            D.E.C.R.E.E. // CENTRAL INTELLIGENCE
+        </span>
+
+    </footer>
+
+</div>
+
+
+<div id="toast"></div>
+
+<script src="knowledge.js"></script>
+<script src="commands.js"></script>
+<script src="voice.js"></script>
+<script src="ai.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
