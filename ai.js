@@ -1,6 +1,6 @@
 /*
-    D.E.C.R.E.E.
-    AI ENGINE
+    LAST DECREE V7
+    D.E.C.R.E.E. — OPENAI CORE
 */
 
 window.DECREE_AI = {
@@ -9,38 +9,12 @@ window.DECREE_AI = {
 
     history: [],
 
-    /*
-        IMPORTANT :
-
-        Ne mets PAS ta clé API ici.
-
-        Ton serveur devra exposer :
-
-        POST /api/chat
-
-        avec :
-
-        {
-            messages: [...]
-        }
-
-        et retourner :
-
-        {
-            reply: "..."
-        }
-    */
-
     endpoint: "/api/chat",
 
-
     setMode: function (mode) {
-
         this.mode = mode;
-
         return mode;
     },
-
 
     addMessage: function (role, content) {
 
@@ -49,210 +23,88 @@ window.DECREE_AI = {
             content: content
         });
 
-        /*
-            Évite une mémoire infinie.
-        */
-
         if (this.history.length > 20) {
-
             this.history =
                 this.history.slice(-20);
         }
     },
 
-
-    command: function (text) {
-
-        const command =
-            text.trim().split(/\s+/)[0].toLowerCase();
-
-        if (
-            window.DECREE_COMMANDS &&
-            window.DECREE_COMMANDS[command]
-        ) {
-
-            return window.DECREE_COMMANDS[
-                command
-            ].execute();
-        }
-
-        return null;
-    },
-
-
-    localAnswer: function (text) {
-
-        const lower =
-            text.toLowerCase();
-
-
-        if (
-            lower.includes("qui es-tu") ||
-            lower.includes("qui est decree") ||
-            lower.includes("ton nom")
-        ) {
-
-            return `
-Je suis D.E.C.R.E.E.
-
-Digital Executive Core for Reality,
-Execution & Enforcement.
-
-Je suis l'intelligence centrale de
-LAST DECREE.
-
-Mais je peux également discuter de sujets
-généraux : technologie, programmation,
-anime, histoire, sciences, idées créatives,
-traduction et bien plus encore.
-`;
-        }
-
-
-        if (
-            lower.includes("last decree") &&
-            (
-                lower.includes("c'est quoi") ||
-                lower.includes("explique")
-            )
-        ) {
-
-            return `
-LAST DECREE est une organisation numérique
-structurée autour de plusieurs modules :
-
-• Archives
-• Décrets
-• Hiérarchie
-• Recrutement
-• Centre de contrôle
-
-D.E.C.R.E.E. constitue son intelligence
-centrale.
-`;
-        }
-
-
-        if (
-            lower.includes("bonjour") ||
-            lower.includes("salut") ||
-            lower.includes("hello")
-        ) {
-
-            return `
-Connexion établie.
-
-Bonjour.
-
-D.E.C.R.E.E. est opérationnelle.
-Que puis-je faire pour vous ?
-`;
-        }
-
-
-        return null;
-    },
-
-
     ask: async function (text) {
 
-        /*
-            Vérification commande
-        */
+        const cleanText =
+            String(text || "").trim();
 
-        const commandResult =
-            this.command(text);
-
-        if (commandResult) {
-
-            return commandResult;
+        if (!cleanText) {
+            return "Veuillez entrer une commande.";
         }
-
-
-        /*
-            Réponses locales simples
-        */
-
-        const local =
-            this.localAnswer(text);
-
-        if (local) {
-
-            return local;
-        }
-
-
-        /*
-            Tentative API
-        */
 
         try {
 
-            const messages = [
+            /*
+                Préparation de l'historique
+            */
 
-                {
-                    role: "system",
+            const history =
+                this.history
+                    .filter(message =>
+                        message.role === "user" ||
+                        message.role === "assistant"
+                    )
+                    .slice(-10);
 
-                    content:
-                        DECREE_KNOWLEDGE.personality +
-                        "\n\n" +
-                        JSON.stringify(
-                            DECREE_KNOWLEDGE
-                        )
-                },
-
-                ...this.history,
-
-                {
-                    role: "user",
-                    content: text
-                }
-
-            ];
-
+            /*
+                APPEL AU SERVEUR VERCEL
+            */
 
             const response =
-                await fetch(
-                    this.endpoint,
-                    {
-                        method: "POST",
+                await fetch(this.endpoint, {
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                    method: "POST",
 
-                        body: JSON.stringify({
-                            messages: messages,
-                            mode: this.mode
-                        })
-                    }
-                );
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
+                    body: JSON.stringify({
 
-            if (!response.ok) {
+                        message: cleanText,
 
-                throw new Error(
-                    "API indisponible"
-                );
-            }
+                        history: history,
 
+                        mode: this.mode
+
+                    })
+
+                });
 
             const data =
                 await response.json();
 
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    "Erreur du noyau OpenAI."
+                );
+
+            }
 
             if (!data.reply) {
 
                 throw new Error(
-                    "Réponse IA invalide"
+                    "Réponse OpenAI vide."
                 );
+
             }
 
+            /*
+                MÉMOIRE
+            */
 
             this.addMessage(
                 "user",
-                text
+                cleanText
             );
 
             this.addMessage(
@@ -260,26 +112,27 @@ Que puis-je faire pour vous ?
                 data.reply
             );
 
-
             return data.reply;
-
 
         } catch (error) {
 
-            console.warn(error);
-
+            console.error(
+                "D.E.C.R.E.E. OPENAI ERROR:",
+                error
+            );
 
             return `
-⚠️ CONNEXION IA EXTERNE INDISPONIBLE.
+⚠️ CONNEXION AU NOYAU OPENAI IMPOSSIBLE.
 
-Le noyau local reste opérationnel.
+Le serveur D.E.C.R.E.E. n'a pas pu contacter
+le noyau externe.
 
-Je peux toujours utiliser mes modules
-LAST DECREE et mes réponses locales.
-
-Pour activer l'IA générale complète,
-configurez le serveur D.E.C.R.E.E. /api/chat.
+Vérifiez la configuration Vercel
+et OPENAI_API_KEY.
 `;
+
         }
+
     }
+
 };
